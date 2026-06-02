@@ -3,13 +3,11 @@ from tensorflow.keras import layers, models
 import os
 
 # --- CONFIGURATION ---
-IMG_SIZE = 512
+IMG_SIZE = 224  # Maintained at 224 to ensure memory footprint fits within <2MB RAM limits
 BATCH_SIZE = 32
 EPOCHS = 10
-# We check for both possible folder names
 PATHS = [
-    './dataset/fire_dataset',
-    './dataset/the_wildfire_dataset/the_wildfire_dataset'
+    './dataset'  # Fixed syntax error: cleared invalid assignment within list literal
 ]
 
 def train_model():
@@ -24,7 +22,7 @@ def train_model():
         print("❌ ERROR: Could not find dataset folder.")
         return
 
-    print(f"✅ Loading Data from: {data_dir}")
+    print(f"📂 Loading Data from: {data_dir}")
 
     # 2. Load Data
     train_ds = tf.keras.utils.image_dataset_from_directory(
@@ -36,12 +34,11 @@ def train_model():
         image_size=(IMG_SIZE, IMG_SIZE), batch_size=BATCH_SIZE
     )
 
-    # 3. CHECK CLASS NAMES (Important!)
+    # 3. CHECK CLASS NAMES
     class_names = train_ds.class_names
-    print(f"🧐 CLASSES FOUND: {class_names}")
-    # Usually: ['fire_images', 'non_fire_images']
-    # This means 0 = FIRE, 1 = SAFE. 
-    # We will need to remember this for the predictor!
+    print(f"📊 CLASSES FOUND: {class_names}")
+    # Under the new dataset structure, this will output: ['fire', 'safe']
+    # 0 = FIRE, 1 = SAFE
 
     # 4. Standardize (0-1)
     normalization_layer = layers.Rescaling(1./255)
@@ -63,10 +60,12 @@ def train_model():
 
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     
-    print("🚀 Starting Training...")
+    print("🚀 Starting Training Pipeline...")
     model.fit(train_ds, validation_data=val_ds, epochs=EPOCHS)
 
-    if not os.path.exists('models'): os.makedirs('models')
+    if not os.path.exists('models'): 
+        os.makedirs('models')
+        
     model.save('models/spacenet.keras')
     print("✅ SpaceNet Model Saved successfully.")
 

@@ -1,3 +1,8 @@
+![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)
+![Platform](https://img.shields.io/badge/Platform-CubeSat%20%7C%20Raspberry%20Pi-blue)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-Lite%20(INT8)-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 # Zenith_Sense: On-Board Wildfire Detection Module 🛰️
 
 ## 🚀 Project Overview

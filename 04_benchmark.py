@@ -71,9 +71,9 @@ def benchmark_tflite(model_path):
     print(f"="*30)
     
     if peak_ram_mb < 50:
-        print("✅ MISSION STATUS: [PASS] Ready for Space-Grade Hardware.")
+        print("MISSION STATUS: [PASS] Ready for Space-Grade Hardware.")
     else:
-        print("❌ MISSION STATUS: [FAIL] Exceeds Memory Limits.")
+        print("MISSION STATUS: [FAIL] Exceeds Memory Limits.")
 
 # --- THE START BUTTON (Crucial Part) ---
 if __name__ == "__main__":

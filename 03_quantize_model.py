@@ -20,7 +20,7 @@ def quantize():
     output_path = 'models/zenith_int8.tflite'
 
     if not os.path.exists(model_path):
-        print("❌ Error: spacenet.keras not found. Run script 02!")
+        print("Error: spacenet.keras not found. Run script 02!")
         return
 
     print("Loading SpaceNet...")
@@ -36,7 +36,7 @@ def quantize():
 
     with open(output_path, 'wb') as f:
         f.write(tflite_model)
-    print(f"✅ Success! Saved to {output_path}")
+    print(f"Success! Saved to {output_path}")
 
 if __name__ == "__main__":
     quantize()
