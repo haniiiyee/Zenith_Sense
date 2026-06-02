@@ -19,10 +19,10 @@ def train_model():
             break
     
     if not data_dir:
-        print("❌ ERROR: Could not find dataset folder.")
+        print("ERROR: Could not find dataset folder.")
         return
 
-    print(f"📂 Loading Data from: {data_dir}")
+    print(f"Loading Data from: {data_dir}")
 
     # 2. Load Data
     train_ds = tf.keras.utils.image_dataset_from_directory(
@@ -36,7 +36,7 @@ def train_model():
 
     # 3. CHECK CLASS NAMES
     class_names = train_ds.class_names
-    print(f"📊 CLASSES FOUND: {class_names}")
+    print(f"CLASSES FOUND: {class_names}")
     # Under the new dataset structure, this will output: ['fire', 'safe']
     # 0 = FIRE, 1 = SAFE
 
@@ -45,22 +45,36 @@ def train_model():
     train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
     val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
 
-    # 5. Build SpaceNet
+    # 5. Build High-Capacity SpaceNet (Optimized for INT8 Survival)
     model = models.Sequential([
         layers.Input(shape=(IMG_SIZE, IMG_SIZE, 3)),
-        layers.Conv2D(32, (3, 3), activation='relu'),
+        
+        # Block 1: Feature Extraction
+        layers.Conv2D(32, (3, 3), padding='same', activation='relu'),
+        layers.BatchNormalization(),
         layers.MaxPooling2D((2, 2)),
-        layers.Conv2D(64, (3, 3), activation='relu'),
+        
+        # Block 2: Geometry & Edges
+        layers.Conv2D(64, (3, 3), padding='same', activation='relu'),
+        layers.BatchNormalization(),
         layers.MaxPooling2D((2, 2)),
-        layers.Conv2D(64, (3, 3), activation='relu'),
+        
+        # Block 3: Texture Mapping
+        layers.Conv2D(128, (3, 3), padding='same', activation='relu'),
+        layers.BatchNormalization(),
+        layers.MaxPooling2D((2, 2)),
+        
+        # Dense Head
         layers.GlobalAveragePooling2D(),
-        layers.Dense(64, activation='relu'),
+        layers.Dense(128, activation='relu'),
+        layers.Dropout(0.3),
         layers.Dense(1, activation='sigmoid')
+    
     ])
 
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     
-    print("🚀 Starting Training Pipeline...")
+    print("Starting Training Pipeline...")
     model.fit(train_ds, validation_data=val_ds, epochs=EPOCHS)
 
     if not os.path.exists('models'): 
